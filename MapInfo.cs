@@ -11,6 +11,8 @@
         public string KillsString => Kills + "/" + MaxKills;
         public string SecretsString => Secrets + "/" + MaxSecrets;
 
+        public static MapInfo Empty = new MapInfo("");
+
         public MapInfo(string name)
         {
             Name = name;

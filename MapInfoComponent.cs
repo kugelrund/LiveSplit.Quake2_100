@@ -28,9 +28,7 @@ namespace LiveSplit.Quake2_100
         protected SimpleLabel MapLabel { get; set; }
         protected SimpleLabel KillsLabel { get; set; }
         protected SimpleLabel SecretsLabel { get; set; }
-
-        private Settings settings;
-
+        
         public GraphicsCache Cache { get; set; }
 
         public float PaddingTop => 0f;
@@ -39,19 +37,14 @@ namespace LiveSplit.Quake2_100
         public float PaddingRight => 0f;       
 
         public float VerticalHeight => 25;
-
         public float MinimumWidth { get; set; }
-
         public float HorizontalWidth => CalculateLabelsWidth();
-
         public float MinimumHeight { get; set; }
 
         public IDictionary<string, Action> ContextMenuControls => null;
 
-        public MapInfoComponent(Settings settings, MapInfo mapInfo)
+        public MapInfoComponent(MapInfo mapInfo)
         {
-            this.settings = settings;
-
             MapLabel = new SimpleLabel()
             {
                 HorizontalAlignment = StringAlignment.Near,
@@ -142,14 +135,7 @@ namespace LiveSplit.Quake2_100
 
         public void DrawVertical(Graphics g, LiveSplitState state, float width, Region clipRegion)
         {
-            if (settings.Display2Rows)
-            {
-                DrawGeneral(g, state, width, VerticalHeight, LayoutMode.Horizontal);
-            }
-            else
-            {
-                DrawGeneral(g, state, width, VerticalHeight, LayoutMode.Vertical);
-            }
+            DrawGeneral(g, state, width, VerticalHeight, LayoutMode.Vertical);
         }
 
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion)
