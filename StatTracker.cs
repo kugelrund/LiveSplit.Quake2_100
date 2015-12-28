@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LiveSplit.ComponentUtil;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LiveSplit.Quake2_100
@@ -56,11 +57,11 @@ namespace LiveSplit.Quake2_100
         #endregion
         private const int MAX_MAP_LENGTH = 8;
 
-        private static readonly DeepPointer mapAddress = new DeepPointer("gamex86.dll", 0x614C8);
-        private static readonly DeepPointer killsAddress = new DeepPointer("gamex86.dll", 0x615A0);
-        private static readonly DeepPointer maxKillsAddress = new DeepPointer("gamex86.dll", 0x6159C);
-        private static readonly DeepPointer secretsAddress = new DeepPointer("gamex86.dll", 0x61590);
-        private static readonly DeepPointer maxSecretsAddress = new DeepPointer("gamex86.dll", 0x6158C);
+        private static readonly DeepPointer mapAddress = new DeepPointer(0x39B8D0);
+        private static readonly DeepPointer killsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x194);
+        private static readonly DeepPointer maxKillsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x190);
+        private static readonly DeepPointer secretsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x184);
+        private static readonly DeepPointer maxSecretsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x180);
 
         public StatTracker(int length)
         {
@@ -76,11 +77,11 @@ namespace LiveSplit.Quake2_100
 
         public void Update(Process gameProcess)
         {
-            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
             int kills = killsAddress.Deref(gameProcess, 0);
             int secrets = secretsAddress.Deref(gameProcess, 0);
             int maxKills = maxKillsAddress.Deref(gameProcess, 0);
             int maxSecrets = maxSecretsAddress.Deref(gameProcess, 0);
+            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
 
             if (!string.IsNullOrEmpty(map) && maps.ContainsKey(map))
             {

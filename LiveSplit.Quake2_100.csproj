@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component.cs" />
-    <Compile Include="DeepPointer.cs" />
     <Compile Include="Factory.cs" />
     <Compile Include="MapInfo.cs" />
     <Compile Include="MapInfoComponent.cs" />
