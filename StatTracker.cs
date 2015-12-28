@@ -1,9 +1,5 @@
-﻿using LiveSplit.ComponentUtil;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace LiveSplit.Quake2_100
 {

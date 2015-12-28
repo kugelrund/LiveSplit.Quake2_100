@@ -1,4 +1,14 @@
 <updates>
+	<update version="1.2">
+        <files>
+            <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Potential bugfix for quickloading.
+            </change>
+        </changelog>
+    </update>
 	<update version="1.1">
         <files>
             <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
