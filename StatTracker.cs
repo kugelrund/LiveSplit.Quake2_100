@@ -57,11 +57,11 @@ namespace LiveSplit.Quake2_100
         #endregion
         private const int MAX_MAP_LENGTH = 8;
 
-        private static readonly DeepPointer mapAddress = new DeepPointer(0x39B8D0);
-        private static readonly DeepPointer killsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x194);
-        private static readonly DeepPointer maxKillsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x190);
-        private static readonly DeepPointer secretsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x184);
-        private static readonly DeepPointer maxSecretsAddress = new DeepPointer(0x264ED8, 0x23B8, 0x354, 0xC, 0x180);
+        private static readonly DeepPointer mapAddress = new DeepPointer("gamex86.dll", 0x614C8);
+        private static readonly DeepPointer killsAddress = new DeepPointer("gamex86.dll", 0x615A0);
+        private static readonly DeepPointer maxKillsAddress = new DeepPointer("gamex86.dll", 0x6159C);
+        private static readonly DeepPointer secretsAddress = new DeepPointer("gamex86.dll", 0x61590);
+        private static readonly DeepPointer maxSecretsAddress = new DeepPointer("gamex86.dll", 0x6158C);
 
         public StatTracker(int length)
         {
