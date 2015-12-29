@@ -1,6 +1,11 @@
 ﻿using LiveSplit.ComponentUtil;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace LiveSplit.Quake2_100
 {
@@ -56,12 +61,28 @@ namespace LiveSplit.Quake2_100
         };
         #endregion
         private const int MAX_MAP_LENGTH = 8;
+        
+        [DllImport("psapi.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumProcessModulesEx(IntPtr hProcess, [Out] IntPtr[] lphModule, uint cb,
+            out uint lpcbNeeded, uint dwFilterFlag);
 
-        private static readonly DeepPointer mapAddress = new DeepPointer("gamex86.dll", 0x614C8);
-        private static readonly DeepPointer killsAddress = new DeepPointer("gamex86.dll", 0x615A0);
-        private static readonly DeepPointer maxKillsAddress = new DeepPointer("gamex86.dll", 0x6159C);
-        private static readonly DeepPointer secretsAddress = new DeepPointer("gamex86.dll", 0x61590);
-        private static readonly DeepPointer maxSecretsAddress = new DeepPointer("gamex86.dll", 0x6158C);
+        [DllImport("psapi.dll")]
+        private static extern uint GetModuleBaseName(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName,
+            uint nSize);
+
+        [DllImport("psapi.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetModuleInformation(IntPtr hProcess, IntPtr hModule, [Out] out MODULEINFO lpmodinfo,
+          uint cb);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MODULEINFO
+        {
+            public IntPtr lpBaseOfDll;
+            public uint SizeOfImage;
+            public IntPtr EntryPoint;
+        }
 
         public StatTracker(int length)
         {
@@ -75,13 +96,49 @@ namespace LiveSplit.Quake2_100
             }
         }
 
+        private IntPtr GetGameModuleBase(Process gameProcess)
+        {
+            const int LIST_MODULES_ALL = 3;
+            const int MAX_PATH = 260;
+            var hModules = new IntPtr[1024];
+
+            uint cb = (uint)IntPtr.Size * (uint)hModules.Length;
+            uint cbNeeded;
+            if (!EnumProcessModulesEx(gameProcess.Handle, hModules, cb, out cbNeeded, LIST_MODULES_ALL))
+                throw new Win32Exception();
+            uint numMods = cbNeeded / (uint)IntPtr.Size;
+
+            var sb = new StringBuilder(MAX_PATH);
+            for (int i = 0; i < numMods; i++)
+            {
+                sb.Clear();
+                if (GetModuleBaseName(gameProcess.Handle, hModules[i], sb, (uint)sb.Capacity) == 0)
+                    throw new Win32Exception();
+                string baseName = sb.ToString();
+
+                if (baseName.ToLower() == "gamex86.dll")
+                {
+                    var moduleInfo = new MODULEINFO();
+                    if (!GetModuleInformation(gameProcess.Handle, hModules[i], out moduleInfo,
+                                              (uint)Marshal.SizeOf(moduleInfo)))
+                    {
+                        throw new Win32Exception();
+                    }
+                    return moduleInfo.lpBaseOfDll;
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+
         public void Update(Process gameProcess)
         {
-            int kills = killsAddress.Deref(gameProcess, 0);
-            int secrets = secretsAddress.Deref(gameProcess, 0);
-            int maxKills = maxKillsAddress.Deref(gameProcess, 0);
-            int maxSecrets = maxSecretsAddress.Deref(gameProcess, 0);
-            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
+            IntPtr _base = GetGameModuleBase(gameProcess);
+            int kills = gameProcess.ReadValue<int>(_base + 0x615A0);
+            int secrets = gameProcess.ReadValue<int>(_base + 0x61590);
+            int maxKills = gameProcess.ReadValue<int>(_base + 0x6159C);
+            int maxSecrets = gameProcess.ReadValue<int>(_base + 0x6158C);
+            string map = gameProcess.ReadString(_base + 0x614C8, MAX_MAP_LENGTH, "");
 
             if (!string.IsNullOrEmpty(map) && maps.ContainsKey(map))
             {
@@ -113,7 +170,22 @@ namespace LiveSplit.Quake2_100
                     int last = MapInfoComponents.Count - 1;
 
                     info.Kills = kills;
-                    info.MaxKills = maxKills;
+                    if (map == "lab")
+                    {
+                        info.MaxKills = 33;
+                    }
+                    else if (map == "city1")
+                    {
+                        info.MaxKills = 34;
+                    }
+                    else if (map == "city3")
+                    {
+                        info.MaxKills = 43;
+                    }
+                    else
+                    {
+                        info.MaxKills = maxKills;
+                    }
                     info.Secrets = secrets;
                     info.MaxSecrets = maxSecrets;
 
