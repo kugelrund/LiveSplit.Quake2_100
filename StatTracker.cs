@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace LiveSplit.Quake2_100
 {
@@ -14,6 +15,13 @@ namespace LiveSplit.Quake2_100
         private string currMap;
         private List<string> currMaps;
         public List<MapInfoComponent> MapInfoComponents { get; set; }
+
+        private int killsAddress;
+        private int maxKillsAddress;
+        private int secretsAddress;
+        private int maxSecretsAddress;
+        private DeepPointer mapAddress;
+        private GameVersion gameVersion;
 
         #region maps dictionary
         private Dictionary<string, MapInfo> maps = new Dictionary<string, MapInfo>()
@@ -61,7 +69,7 @@ namespace LiveSplit.Quake2_100
         };
         #endregion
         private const int MAX_MAP_LENGTH = 8;
-        
+
         [DllImport("psapi.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumProcessModulesEx(IntPtr hProcess, [Out] IntPtr[] lphModule, uint cb,
@@ -131,14 +139,50 @@ namespace LiveSplit.Quake2_100
             return IntPtr.Zero;
         }
 
+        public void UpdateVersion(Process gameProcess)
+        {
+            if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5029888)
+            {
+                gameVersion = GameVersion.v2014_12_03;
+            }
+            else if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5033984)
+            {
+                gameVersion = GameVersion.v2016_01_12;
+            }
+            else
+            {
+                MessageBox.Show("Unsupported game version", "LiveSplit.Quake2_100",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                gameVersion = GameVersion.v2014_12_03;
+            }
+
+            switch (gameVersion)
+            {
+                case GameVersion.v2014_12_03:
+                    killsAddress = 0x615A0;
+                    maxKillsAddress = 0x6159C;
+                    secretsAddress = 0x61590;
+                    maxSecretsAddress = 0x6158C;
+                    mapAddress = new DeepPointer(0x3086C4);
+                    break;
+                case GameVersion.v2016_01_12:
+                    killsAddress = 0x625A0;
+                    maxKillsAddress = 0x6259C;
+                    secretsAddress = 0x62590;
+                    maxSecretsAddress = 0x6258C;
+                    mapAddress = new DeepPointer(0x33FF44);
+                    break;
+            }
+        }
+
         public void Update(Process gameProcess)
         {
             IntPtr _base = GetGameModuleBase(gameProcess);
-            int kills = gameProcess.ReadValue<int>(_base + 0x615A0);
-            int secrets = gameProcess.ReadValue<int>(_base + 0x61590);
-            int maxKills = gameProcess.ReadValue<int>(_base + 0x6159C);
-            int maxSecrets = gameProcess.ReadValue<int>(_base + 0x6158C);
-            string map = gameProcess.ReadString(_base + 0x614C8, MAX_MAP_LENGTH, "");
+            int kills = gameProcess.ReadValue<int>(_base + killsAddress);
+            int secrets = gameProcess.ReadValue<int>(_base + secretsAddress);
+            int maxKills = gameProcess.ReadValue<int>(_base + maxKillsAddress);
+            int maxSecrets = gameProcess.ReadValue<int>(_base + maxSecretsAddress);
+            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
 
             if (!string.IsNullOrEmpty(map) && maps.ContainsKey(map))
             {
@@ -193,5 +237,11 @@ namespace LiveSplit.Quake2_100
                 }
             }
         }
+    }
+
+    public enum GameVersion
+    {
+        v2014_12_03, // latest version of original Quake II Pro release, build from Dec 3 2014
+        v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
     }
 }
