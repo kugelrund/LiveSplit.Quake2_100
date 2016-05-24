@@ -22,6 +22,7 @@ namespace LiveSplit.Quake2_100
         private int maxSecretsAddress;
         private DeepPointer mapAddress;
         private GameVersion gameVersion;
+        private bool hasVersion = false;
 
         #region maps dictionary
         private Dictionary<string, MapInfo> maps = new Dictionary<string, MapInfo>()
@@ -173,10 +174,17 @@ namespace LiveSplit.Quake2_100
                     mapAddress = new DeepPointer(0x33FF44);
                     break;
             }
+
+            hasVersion = true;
         }
 
         public void Update(Process gameProcess)
         {
+            if (!hasVersion)
+            {
+                UpdateVersion(gameProcess);
+            }
+
             IntPtr _base = GetGameModuleBase(gameProcess);
             int kills = gameProcess.ReadValue<int>(_base + killsAddress);
             int secrets = gameProcess.ReadValue<int>(_base + secretsAddress);
