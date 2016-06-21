@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -16,6 +15,7 @@ namespace LiveSplit.Quake2_100
         private List<string> currMaps;
         public List<MapInfoComponent> MapInfoComponents { get; set; }
 
+        private DeepPointer inIntermission;
         private int killsAddress;
         private int maxKillsAddress;
         private int secretsAddress;
@@ -160,6 +160,7 @@ namespace LiveSplit.Quake2_100
             switch (gameVersion)
             {
                 case GameVersion.v2014_12_03:
+                    inIntermission = new DeepPointer(0x2C679C);
                     killsAddress = 0x615A0;
                     maxKillsAddress = 0x6159C;
                     secretsAddress = 0x61590;
@@ -167,6 +168,7 @@ namespace LiveSplit.Quake2_100
                     mapAddress = new DeepPointer(0x3086C4);
                     break;
                 case GameVersion.v2016_01_12:
+                    inIntermission = new DeepPointer(0x2FDF28);
                     killsAddress = 0x625A0;
                     maxKillsAddress = 0x6259C;
                     secretsAddress = 0x62590;
@@ -186,62 +188,50 @@ namespace LiveSplit.Quake2_100
             }
 
             IntPtr _base = GetGameModuleBase(gameProcess);
-            int kills = gameProcess.ReadValue<int>(_base + killsAddress);
-            int secrets = gameProcess.ReadValue<int>(_base + secretsAddress);
-            int maxKills = gameProcess.ReadValue<int>(_base + maxKillsAddress);
-            int maxSecrets = gameProcess.ReadValue<int>(_base + maxSecretsAddress);
-            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
-
-            if (!string.IsNullOrEmpty(map) && maps.ContainsKey(map))
+            if (inIntermission.Deref<int>(gameProcess) == 0)
             {
-                if (map != currMap)
+                int kills = gameProcess.ReadValue<int>(_base + killsAddress);
+                int secrets = gameProcess.ReadValue<int>(_base + secretsAddress);
+                int maxKills = gameProcess.ReadValue<int>(_base + maxKillsAddress);
+                int maxSecrets = gameProcess.ReadValue<int>(_base + maxSecretsAddress);
+                string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH, "");
+
+                if (!string.IsNullOrEmpty(map) && maps.ContainsKey(map))
                 {
-                    if (currMaps.Contains(map))
+                    if (map != currMap)
                     {
-                        currMaps.Remove(map);
-                        currMaps.Add(map);
-                    }
-                    else
-                    {
-                        currMaps.Add(map);
-                        currMaps.RemoveAt(0);
+                        if (currMaps.Contains(map))
+                        {
+                            currMaps.Remove(map);
+                            currMaps.Add(map);
+                        }
+                        else
+                        {
+                            currMaps.Add(map);
+                            currMaps.RemoveAt(0);
+                        }
+
+                        for (int i = 0; i < currMaps.Count; i += 1)
+                        {
+                            MapInfoComponents[i].MapInfo = maps[currMaps[i]];
+                        }
+
+                        currMap = map;
                     }
 
-                    for (int i = 0; i < currMaps.Count; i += 1)
+                    MapInfo info = maps[map];
+                    if (kills != info.Kills || secrets != info.Secrets ||
+                        maxKills != info.MaxKills || maxSecrets != info.MaxSecrets)
                     {
-                        MapInfoComponents[i].MapInfo = maps[currMaps[i]];
-                    }
+                        int last = MapInfoComponents.Count - 1;
 
-                    currMap = map;
-                }
-
-                MapInfo info = maps[map];
-                if (kills != info.Kills || secrets != info.Secrets ||
-                    maxKills != info.MaxKills || maxSecrets != info.MaxSecrets)
-                {
-                    int last = MapInfoComponents.Count - 1;
-
-                    info.Kills = kills;
-                    if (map == "lab")
-                    {
-                        info.MaxKills = 33;
-                    }
-                    else if (map == "city1")
-                    {
-                        info.MaxKills = 34;
-                    }
-                    else if (map == "city3")
-                    {
-                        info.MaxKills = 43;
-                    }
-                    else
-                    {
+                        info.Kills = kills;
                         info.MaxKills = maxKills;
-                    }
-                    info.Secrets = secrets;
-                    info.MaxSecrets = maxSecrets;
+                        info.Secrets = secrets;
+                        info.MaxSecrets = maxSecrets;
 
-                    MapInfoComponents[last].MapInfo = info;
+                        MapInfoComponents[last].MapInfo = info;
+                    }
                 }
             }
         }

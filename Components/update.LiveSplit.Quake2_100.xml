@@ -1,4 +1,14 @@
 <updates>
+  <update version="1.8">
+    <files>
+      <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Fixed weird things happening on map change (maybe?).
+      </change>
+    </changelog>
+  </update>
   <update version="1.7">
     <files>
       <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
