@@ -1,11 +1,11 @@
-﻿using LiveSplit.ComponentUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.Quake2_100
 {
@@ -68,7 +68,7 @@ namespace LiveSplit.Quake2_100
             { "boss2", new MapInfo("Final Showdown") },
             { "", MapInfo.Empty }
         };
-        #endregion
+        #endregion maps dictionary
         private const int MAX_MAP_LENGTH = 8;
 
         [DllImport("psapi.dll", SetLastError = true)]
@@ -173,7 +173,7 @@ namespace LiveSplit.Quake2_100
                     maxKillsAddress = 0x6259C;
                     secretsAddress = 0x62590;
                     maxSecretsAddress = 0x6258C;
-                    mapAddress = new DeepPointer(0x33FF44);
+                    mapAddress = new DeepPointer(0x39C850);
                     break;
             }
 
