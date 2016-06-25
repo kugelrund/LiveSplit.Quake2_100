@@ -1,11 +1,11 @@
-﻿using LiveSplit.Model;
-using LiveSplit.UI;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using LiveSplit.Model;
+using LiveSplit.UI;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.Quake2_100
 {
@@ -56,7 +56,7 @@ namespace LiveSplit.Quake2_100
             InternalComponent = new ComponentRendererComponent();
             InternalComponent.VisibleComponents = statTracker.MapInfoComponents;
         }
-                
+
         public void DrawVertical(Graphics g, LiveSplitState state, float width, Region clipRegion)
         {
             InternalComponent.DrawVertical(g, state, width, clipRegion);
@@ -65,7 +65,7 @@ namespace LiveSplit.Quake2_100
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion)
         {
             InternalComponent.DrawHorizontal(g, state, height, clipRegion);
-        }        
+        }
 
         private Process gameProcess = null;
 
@@ -73,7 +73,7 @@ namespace LiveSplit.Quake2_100
         {
             if (gameProcess != null && !gameProcess.HasExited)
             {
-                statTracker.Update(gameProcess);                
+                statTracker.Update(gameProcess);
             }
             else
             {

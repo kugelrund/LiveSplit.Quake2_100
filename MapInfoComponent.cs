@@ -1,10 +1,10 @@
-﻿using LiveSplit.Model;
-using LiveSplit.UI;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using LiveSplit.Model;
+using LiveSplit.UI;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.Quake2_100
 {
@@ -28,13 +28,13 @@ namespace LiveSplit.Quake2_100
         protected SimpleLabel MapLabel { get; set; }
         protected SimpleLabel KillsLabel { get; set; }
         protected SimpleLabel SecretsLabel { get; set; }
-        
+
         public GraphicsCache Cache { get; set; }
 
         public float PaddingTop => 0f;
         public float PaddingLeft => 0f;
         public float PaddingBottom => 0f;
-        public float PaddingRight => 0f;       
+        public float PaddingRight => 0f;
 
         public float VerticalHeight => 25;
         public float MinimumWidth { get; set; }
@@ -72,7 +72,7 @@ namespace LiveSplit.Quake2_100
             KillsLabel.Font = state.LayoutSettings.TextFont;
             KillsLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
             KillsLabel.SetActualWidth(g);
-            KillsLabel.ForeColor = (mapInfo.Kills == mapInfo.MaxKills) ? 
+            KillsLabel.ForeColor = (mapInfo.Kills == mapInfo.MaxKills) ?
                                    state.LayoutSettings.AheadGainingTimeColor :
                                    state.LayoutSettings.BehindLosingTimeColor;
 
@@ -181,7 +181,7 @@ namespace LiveSplit.Quake2_100
         {
             get { throw new NotSupportedException(); }
         }
-        
+
         protected float CalculateLabelsWidth()
         {
             return MapLabel.ActualWidth + KillsLabel.ActualWidth + SecretsLabel.ActualWidth;

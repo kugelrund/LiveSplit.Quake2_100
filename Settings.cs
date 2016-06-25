@@ -1,11 +1,11 @@
-﻿using LiveSplit.UI;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using LiveSplit.UI;
 
 namespace LiveSplit.Quake2_100
 {
     partial class Settings : UserControl
-    {      
+    {
         public int ListSize { get; set; }
 
         public LayoutMode Mode { get; set; }
@@ -13,14 +13,14 @@ namespace LiveSplit.Quake2_100
         public Settings()
         {
             InitializeComponent();
-            
+
             // defaults
             ListSize = 4;
-            
+
             // assign data bindings
             numListSize.DataBindings.Add("Value", this, "ListSize");
-        }     
-        
+        }
+
         private void ColorButtonClick(object sender, EventArgs e)
         {
             SettingsHelper.ColorButtonClick((Button)sender, this);
@@ -28,8 +28,8 @@ namespace LiveSplit.Quake2_100
 
         public void SetSettings(System.Xml.XmlNode node)
         {
-            System.Xml.XmlElement element = (System.Xml.XmlElement) node;
-            
+            System.Xml.XmlElement element = (System.Xml.XmlElement)node;
+
             ListSize = SettingsHelper.ParseInt(element["ListSize"]);
         }
 
