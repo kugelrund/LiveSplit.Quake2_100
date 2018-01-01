@@ -156,7 +156,17 @@ namespace LiveSplit.Quake2_100
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 gameVersion = GameVersion.v2014_12_03;
             }
+            hasVersion = true;
+        }
 
+        private bool HasCoopFix(Process gameProcess, IntPtr gameModuleAddress)
+        {
+            int magic = gameProcess.ReadValue<int>(gameModuleAddress + 0x3C);
+            return magic == 232;
+        }
+
+        private void SetupAddresses(bool hasCoopFix)
+        {
             switch (gameVersion)
             {
                 case GameVersion.v2014_12_03:
@@ -177,7 +187,13 @@ namespace LiveSplit.Quake2_100
                     break;
             }
 
-            hasVersion = true;
+            if (hasCoopFix)
+            {
+                killsAddress = 0x77520;
+                maxKillsAddress = 0x7751C;
+                secretsAddress = 0x77510;
+                maxSecretsAddress = 0x7750C;
+            }
         }
 
         public void Update(Process gameProcess)
@@ -188,6 +204,7 @@ namespace LiveSplit.Quake2_100
             }
 
             IntPtr _base = GetGameModuleBase(gameProcess);
+            SetupAddresses(HasCoopFix(gameProcess, _base));
             if (inIntermission.Deref<int>(gameProcess) == 0)
             {
                 int kills = gameProcess.ReadValue<int>(_base + killsAddress);
