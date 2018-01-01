@@ -43,6 +43,8 @@ namespace LiveSplit.Quake2_100
             System.Xml.XmlElement element = (System.Xml.XmlElement)node;
 
             ListSize = SettingsHelper.ParseInt(element["ListSize"]);
+            ShowKills = SettingsHelper.ParseBool(element["ShowKills"]);
+            ShowSecrets = SettingsHelper.ParseBool(element["ShowSecrets"]);
         }
 
         public System.Xml.XmlNode GetSettings(System.Xml.XmlDocument document)
@@ -60,7 +62,9 @@ namespace LiveSplit.Quake2_100
         private int CreateSettingsNode(System.Xml.XmlDocument document, System.Xml.XmlElement parent)
         {
             return SettingsHelper.CreateSetting(document, parent, "Version", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version) ^
-            SettingsHelper.CreateSetting(document, parent, "ListSize", ListSize);
+            SettingsHelper.CreateSetting(document, parent, "ListSize", ListSize) ^
+            SettingsHelper.CreateSetting(document, parent, "ShowKills", ShowKills) ^
+            SettingsHelper.CreateSetting(document, parent, "ShowSecrets", ShowSecrets);
         }
     }
 }
