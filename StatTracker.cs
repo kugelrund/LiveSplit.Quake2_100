@@ -15,6 +15,7 @@ namespace LiveSplit.Quake2_100
         private List<string> currMaps;
         public List<MapInfoComponent> MapInfoComponents { get; set; }
 
+        private IntPtr currentGameModuleAddress;
         private DeepPointer inIntermission;
         private int killsAddress;
         private int maxKillsAddress;
@@ -105,7 +106,7 @@ namespace LiveSplit.Quake2_100
             }
         }
 
-        private IntPtr GetGameModuleBase(Process gameProcess)
+        private IntPtr FindGameModuleBase(Process gameProcess)
         {
             const int LIST_MODULES_ALL = 3;
             const int MAX_PATH = 260;
@@ -140,6 +141,20 @@ namespace LiveSplit.Quake2_100
             return IntPtr.Zero;
         }
 
+        private IntPtr GetGameModuleBase(Process gameProcess)
+        {
+            var moduleInfo = new MODULEINFO();
+            if (currentGameModuleAddress == IntPtr.Zero ||
+                !GetModuleInformation(gameProcess.Handle, currentGameModuleAddress,
+                                      out moduleInfo, (uint)Marshal.SizeOf(moduleInfo)))
+            {
+                currentGameModuleAddress = FindGameModuleBase(gameProcess);
+                SetupAddresses(HasCoopFix(gameProcess));
+            }
+
+            return currentGameModuleAddress;
+        }
+
         public void UpdateVersion(Process gameProcess)
         {
             if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5029888)
@@ -157,11 +172,12 @@ namespace LiveSplit.Quake2_100
                 gameVersion = GameVersion.v2014_12_03;
             }
             hasVersion = true;
+            SetupAddresses(false);
         }
 
-        private bool HasCoopFix(Process gameProcess, IntPtr gameModuleAddress)
+        private bool HasCoopFix(Process gameProcess)
         {
-            int magic = gameProcess.ReadValue<int>(gameModuleAddress + 0x3C);
+            int magic = gameProcess.ReadValue<int>(currentGameModuleAddress + 0x3C);
             return magic == 232;
         }
 
@@ -204,7 +220,6 @@ namespace LiveSplit.Quake2_100
             }
 
             IntPtr _base = GetGameModuleBase(gameProcess);
-            SetupAddresses(HasCoopFix(gameProcess, _base));
             if (inIntermission.Deref<int>(gameProcess) == 0)
             {
                 int kills = gameProcess.ReadValue<int>(_base + killsAddress);
