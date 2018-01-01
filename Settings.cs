@@ -43,8 +43,8 @@ namespace LiveSplit.Quake2_100
             System.Xml.XmlElement element = (System.Xml.XmlElement)node;
 
             ListSize = SettingsHelper.ParseInt(element["ListSize"]);
-            ShowKills = SettingsHelper.ParseBool(element["ShowKills"]);
-            ShowSecrets = SettingsHelper.ParseBool(element["ShowSecrets"]);
+            ShowKills = SettingsHelper.ParseBool(element["ShowKills"], true);
+            ShowSecrets = SettingsHelper.ParseBool(element["ShowSecrets"], true);
         }
 
         public System.Xml.XmlNode GetSettings(System.Xml.XmlDocument document)

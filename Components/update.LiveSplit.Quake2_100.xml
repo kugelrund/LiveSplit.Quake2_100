@@ -1,4 +1,14 @@
 <updates>
+  <update version="1.12">
+    <files>
+      <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Make kills and secrets both visible by default
+      </change>
+    </changelog>
+  </update>
   <update version="1.11">
     <files>
       <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
