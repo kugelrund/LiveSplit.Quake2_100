@@ -7,6 +7,16 @@ namespace LiveSplit.Quake2_100
     partial class Settings : UserControl
     {
         public int ListSize { get; set; }
+        public bool ShowKills
+        {
+            get { return MapInfoComponent.ShowKills; }
+            set { MapInfoComponent.ShowKills = value; }
+        }
+        public bool ShowSecrets
+        {
+            get { return MapInfoComponent.ShowSecrets; }
+            set { MapInfoComponent.ShowSecrets = value; }
+        }
 
         public LayoutMode Mode { get; set; }
 
@@ -19,6 +29,8 @@ namespace LiveSplit.Quake2_100
 
             // assign data bindings
             numListSize.DataBindings.Add("Value", this, "ListSize");
+            chkShowKills.DataBindings.Add("Checked", this, "ShowKills");
+            chkShowSecrets.DataBindings.Add("Checked", this, "ShowSecrets");
         }
 
         private void ColorButtonClick(object sender, EventArgs e)

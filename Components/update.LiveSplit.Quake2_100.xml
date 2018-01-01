@@ -1,4 +1,20 @@
 <updates>
+  <update version="1.10">
+    <files>
+      <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Support game DLL with coop fix
+      </change>
+      <change>
+        Only search for game module again when old one becomes faulty. Should improve performance a bit.
+      </change>
+      <change>
+        Add options to disable showing secrets and/or kills
+      </change>
+    </changelog>
+  </update>
   <update version="1.9">
     <files>
       <file path="Components/LiveSplit.Quake2_100.dll" status="changed"/>

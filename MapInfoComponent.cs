@@ -19,11 +19,22 @@ namespace LiveSplit.Quake2_100
             {
                 mapInfo = value;
                 MapLabel.Text = mapInfo.Name;
-                KillsLabel.Text = mapInfo.KillsString;
-                SecretsLabel.Text = mapInfo.SecretsString;
+                KillsLabel.Text = "";
+                SecretsLabel.Text = "";
+                if (ShowKills)
+                {
+                    KillsLabel.Text = mapInfo.KillsString;
+                }
+                if (ShowSecrets)
+                {
+                    SecretsLabel.Text = mapInfo.SecretsString;
+                }
                 textChanged = true;
             }
         }
+
+        public static bool ShowKills { get; set; } = true;
+        public static bool ShowSecrets { get; set; } = true;
 
         protected SimpleLabel MapLabel { get; set; }
         protected SimpleLabel KillsLabel { get; set; }
