@@ -149,7 +149,7 @@ namespace LiveSplit.Quake2_100
                                       out moduleInfo, (uint)Marshal.SizeOf(moduleInfo)))
             {
                 currentGameModuleAddress = FindGameModuleBase(gameProcess);
-                SetupAddresses(HasCoopFix(gameProcess));
+                SetupAddresses();
             }
 
             return currentGameModuleAddress;
@@ -157,31 +157,31 @@ namespace LiveSplit.Quake2_100
 
         public void UpdateVersion(Process gameProcess)
         {
-            if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5029888)
+            switch (gameProcess.MainModuleWow64Safe().ModuleMemorySize)
             {
-                gameVersion = GameVersion.v2014_12_03;
-            }
-            else if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5033984)
-            {
-                gameVersion = GameVersion.v2016_01_12;
-            }
-            else
-            {
-                MessageBox.Show("Unsupported game version", "LiveSplit.Quake2_100",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                gameVersion = GameVersion.v2014_12_03;
+                case 5029888:
+                    gameVersion = GameVersion.v2014_12_03;
+                    break;
+                case 5033984:
+                    gameVersion = GameVersion.v2016_01_12;
+                    break;
+                case 5079040:
+                    gameVersion = GameVersion.v2018_04_22;
+                    break;
+                case 5103616:
+                    gameVersion = GameVersion.v2018_10_13;
+                    break;
+                default:
+                    MessageBox.Show("Unsupported game version", "LiveSplit.Quake2",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    gameVersion = GameVersion.v2014_12_03;
+                    break;
             }
             hasVersion = true;
-            SetupAddresses(false);
+            SetupAddresses();
         }
 
-        private bool HasCoopFix(Process gameProcess)
-        {
-            int magic = gameProcess.ReadValue<int>(currentGameModuleAddress + 0x3C);
-            return magic == 232;
-        }
-
-        private void SetupAddresses(bool hasCoopFix)
+        private void SetupAddresses()
         {
             switch (gameVersion)
             {
@@ -201,14 +201,22 @@ namespace LiveSplit.Quake2_100
                     maxSecretsAddress = 0x6258C;
                     mapAddress = new DeepPointer(0x39C850);
                     break;
-            }
-
-            if (hasCoopFix)
-            {
-                killsAddress = 0x77520;
-                maxKillsAddress = 0x7751C;
-                secretsAddress = 0x77510;
-                maxSecretsAddress = 0x7750C;
+                case GameVersion.v2018_04_22:
+                    inIntermission = new DeepPointer(0x308C68);
+                    killsAddress = 0x60460;
+                    maxKillsAddress = 0x6045C;
+                    secretsAddress = 0x60450;
+                    maxSecretsAddress = 0x6044C;
+                    mapAddress = new DeepPointer(0x3A7490);
+                    break;
+                case GameVersion.v2018_10_13:
+                    inIntermission = new DeepPointer(0x30E788);
+                    killsAddress = 0x62E40;
+                    maxKillsAddress = 0x62E3C;
+                    secretsAddress = 0x62E30;
+                    maxSecretsAddress = 0x62E2C;
+                    mapAddress = new DeepPointer(0x38DAF0);
+                    break;
             }
         }
 
@@ -271,7 +279,9 @@ namespace LiveSplit.Quake2_100
 
     public enum GameVersion
     {
-        v2014_12_03, // latest version of original Quake II Pro release, build from Dec 3 2014
-        v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
+        v2014_12_03, // latest version of original Q2PRO release, build from Dec 3 2014
+        v2016_01_12, // first release of modified Q2PRO, build from Jan 12 2016
+        v2018_04_22, // first release of Q2PRO Speed, r1603, build from Apr 22 2018
+        v2018_10_13  // Q2PRO Speed, r1760, build from Oct 13 2018
     }
 }
