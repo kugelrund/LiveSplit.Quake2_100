@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -36,7 +36,7 @@ namespace LiveSplit.Quake2_100
             { "ware1", new MapInfo("Supply Station") },
             { "ware2", new MapInfo("Warehouse") },
             { "jail1", new MapInfo("Main Gate") },
-            { "jail2", new MapInfo("Destination Center") },
+            { "jail2", new MapInfo("Detention Center") },
             { "jail3", new MapInfo("Security Complex") },
             { "jail4", new MapInfo("Torture Chambers") },
             { "jail5", new MapInfo("Guard House") },
@@ -46,7 +46,7 @@ namespace LiveSplit.Quake2_100
             { "mine2", new MapInfo("Borehole") },
             { "mine3", new MapInfo("Drilling Area") },
             { "mine4", new MapInfo("Lower Mines") },
-            { "fact1", new MapInfo("Receieving Center") },
+            { "fact1", new MapInfo("Receiving Center") },
             { "fact3", new MapInfo("Sudden Death") },
             { "fact2", new MapInfo("Processing Plant") },
             { "power1", new MapInfo("Power Plant") },
@@ -57,7 +57,7 @@ namespace LiveSplit.Quake2_100
             { "waste3", new MapInfo("Pumping Station 2") },
             { "biggun", new MapInfo("Big Gun") },
             { "hangar1", new MapInfo("Outer Hangar") },
-            { "space", new MapInfo("Comm Satelite") },
+            { "space", new MapInfo("Comm Satellite") },
             { "lab", new MapInfo("Research Lab") },
             { "hangar2", new MapInfo("Inner Hangar") },
             { "command", new MapInfo("Launch Command") },
