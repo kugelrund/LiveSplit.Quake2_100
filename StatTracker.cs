@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,6 +26,7 @@ namespace LiveSplit.Quake2_100
         #region maps dictionary
         private Dictionary<string, MapInfo> maps = new Dictionary<string, MapInfo>()
         {
+            // baseq2
             { "base1", new MapInfo("Outer Base") },
             { "base2", new MapInfo("Installation") },
             { "base3", new MapInfo("Comm Center") },
@@ -65,6 +66,42 @@ namespace LiveSplit.Quake2_100
             { "city3", new MapInfo("Upper Palace") },
             { "boss1", new MapInfo("Inner Chamber") },
             { "boss2", new MapInfo("Final Showdown") },
+            // xatrix (The Reckoning)
+            { "xswamp", new MapInfo("The Swamps") },
+            { "xsewer1", new MapInfo("The Sewers") },
+            { "xsewer2", new MapInfo("Waste Sieve") },
+            { "xcompnd1", new MapInfo("Outer Compound") },
+            { "xcompnd2", new MapInfo("Inner Compound") },
+            { "xreactor", new MapInfo("Core Reactor") },
+            { "xware", new MapInfo("The Warehouse") },
+            { "xintell", new MapInfo("Intelligence Center") },
+            { "industry", new MapInfo("Industrial Facility") },
+            { "outbase", new MapInfo("Outer Base") },
+            { "refinery", new MapInfo("Refinery") },
+            { "w_treat", new MapInfo("Water Treatment Plant") },
+            { "badlands", new MapInfo("Badlands") },
+            { "xhangar1", new MapInfo("Lower Hangars") },
+            { "xhangar2", new MapInfo("The Hangars") },
+            { "xship", new MapInfo("Strogg Freighter") },
+            { "xmoon1", new MapInfo("Cargo Bay") },
+            { "xmoon2", new MapInfo("Command Center") },
+            // rogue (Ground Zero)
+            { "rmine1", new MapInfo("Lower Mines") },
+            { "rlava1", new MapInfo("Thaelite Mines") },
+            { "rlava2", new MapInfo("Tectonic Stabilizer") },
+            { "rmine2", new MapInfo("Mine Engineering") },
+            { "rware1", new MapInfo("Eastern Warehouse") },
+            { "rware2", new MapInfo("Waterfront Storage") },
+            { "rbase1", new MapInfo("Logistics Complex") },
+            { "rbase2", new MapInfo("Tactical Command") },
+            { "rhangar1", new MapInfo("Research Hangar") },
+            { "rsewer1", new MapInfo("Waste Processing") },
+            { "rsewer2", new MapInfo("Waste Disposal") },
+            { "rhangar2", new MapInfo("Maintenance Hangars") },
+            { "rammo1", new MapInfo("Munitions Plant") },
+            { "rammo2", new MapInfo("Ammo Depot") },
+            { "rboss", new MapInfo("Widow's Lair") },
+            // empty
             { "", MapInfo.Empty }
         };
         #endregion maps dictionary
@@ -163,23 +200,43 @@ namespace LiveSplit.Quake2_100
             switch (gameModuleSize)
             {
                 case 499712:
-                    gameVersion = GameVersion.baseq2_v2018_10_13;
+                    gameVersion = GameVersion.v2018_10_13_baseq2;
+                    break;
+                case 565248:
+                    gameVersion = GameVersion.v2018_10_13_xatrix;
+                    break;
+                case 679936:
+                    gameVersion = GameVersion.v2018_10_13_rogue;
                     break;
                 default:
                     MessageBox.Show("Unsupported game version", "LiveSplit.Quake2_100",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    gameVersion = GameVersion.baseq2_v2018_10_13;
+                    gameVersion = GameVersion.v2018_10_13_baseq2;
                     break;
             }
 
             switch (gameVersion)
             {
-                case GameVersion.baseq2_v2018_10_13:
+                case GameVersion.v2018_10_13_baseq2:
                     killsAddress = 0x62E40;
                     maxKillsAddress = 0x62E3C;
                     secretsAddress = 0x62E30;
                     maxSecretsAddress = 0x62E2C;
                     mapAddress = 0x62D68;
+                    break;
+                case GameVersion.v2018_10_13_xatrix:
+                    killsAddress = 0x70EE0;
+                    maxKillsAddress = 0x70EDC;
+                    secretsAddress = 0x70ED0;
+                    maxSecretsAddress = 0x70ECC;
+                    mapAddress = 0x70E08;
+                    break;
+                case GameVersion.v2018_10_13_rogue:
+                    killsAddress = 0x8C140;
+                    maxKillsAddress = 0x8C13C;
+                    secretsAddress = 0x8C130;
+                    maxSecretsAddress = 0x8C12C;
+                    mapAddress = 0x8C068;
                     break;
             }
         }
@@ -240,6 +297,8 @@ namespace LiveSplit.Quake2_100
 
     public enum GameVersion
     {
-        baseq2_v2018_10_13,  // Q2PRO Speed, r1760, build from Oct 13 2018, baseq2
+        v2018_10_13_baseq2,  // Q2PRO Speed, r1760, build from Oct 13 2018, baseq2
+        v2018_10_13_xatrix,  // Q2PRO Speed, r1760, build from Oct 13 2018, xatrix (The Reckoning)
+        v2018_10_13_rogue    // Q2PRO Speed, r1760, build from Oct 13 2018, rogue (Ground Zero)
     }
 }
