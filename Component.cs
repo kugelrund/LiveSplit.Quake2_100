@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -78,10 +78,6 @@ namespace LiveSplit.Quake2_100
             else
             {
                 gameProcess = Process.GetProcessesByName("q2pro").FirstOrDefault();
-                if (gameProcess != null)
-                {
-                    statTracker.UpdateVersion(gameProcess);
-                }
             }
 
             if (invalidator != null)
